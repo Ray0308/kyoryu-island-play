@@ -19,5 +19,5 @@ secretAction.onclick=()=>{const stage=$('detail-art').querySelector('.secret-sta
 $('detail-art').addEventListener('animationend',e=>{if(e.animationName==='secret-performance')e.target.classList.remove('is-performing')});
 // Parents can inspect every effect without changing the child's discoveries.
 const secretPreview=document.createElement('details');secretPreview.id='secret-motion-preview';secretPreview.innerHTML='<summary>ひみつの仲間の演出を確認（保存しない）</summary><select id="secret-preview-select" aria-label="ひみつの仲間"></select><button id="secret-preview-open" class="secondary">見本をひらく</button>';
-for(const d of catalogGroup('secret')){const option=document.createElement('option');option.value=d.id;option.textContent=d.name;secretPreview.querySelector('select').append(option)}parent.append(secretPreview);
+for(const d of catalogGroup('secret')){const option=document.createElement('option');option.value=d.id;option.textContent=d.name;secretPreview.querySelector('select').append(option)}developmentTools.append(secretPreview);
 $('secret-preview-open').onclick=()=>{const d=catalog.find(e=>e.id===$('secret-preview-select').value);showCollection('game');activeCategory='secret';renderCatalog();showCard(d);$('detail-info').textContent='見本：'+d.fact;$('normal-card').disabled=$('shiny-card').disabled=true};
