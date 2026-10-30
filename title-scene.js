@@ -25,25 +25,26 @@ window.setInterval(()=>{if(titleMotion?.matches||document.hidden||screen!=='titl
 const titleTracks=document.createElement('div');titleTracks.className='title-tracks';titleTracks.setAttribute('aria-hidden','true');
 for(let i=0;i<7;i++){const track=document.createElement('span');track.style.setProperty('--track',i);track.innerHTML='<svg viewBox="0 0 80 100"><path d="M35 82C24 88 13 78 18 65L25 50 9 22Q5 9 15 15L34 37 35 7Q39-7 44 8L48 37 65 17Q77 8 71 23L57 53Q67 79 51 83L43 79Z"/></svg>';titleTracks.append(track)}$('title-screen').append(titleTracks);
 
-// Distance-spaced alternating footprints follow the mouse, without intercepting clicks.
+// Mouse, finger and pen all leave trails; passive listeners preserve taps and scrolling.
 const cursorTracks=document.createElement('div');cursorTracks.className='cursor-tracks';cursorTracks.setAttribute('aria-hidden','true');document.body.append(cursorTracks);
-let lastTrack=null,trackSide=1;
-function clearCursorTracks(){cursorTracks.replaceChildren();lastTrack=null}
-function leaveCursorTrack(e){
- if(!['title','collection'].includes(screen)||e.pointerType==='touch'||titleMotion?.matches)return;
- const x=e.clientX,y=e.clientY;
- if(!lastTrack){lastTrack={x,y};return}
- const dx=x-lastTrack.x,dy=y-lastTrack.y,distance=Math.hypot(dx,dy);
- if(distance<34)return;
- const angle=Math.atan2(dy,dx),side=trackSide*9;
- const track=document.createElement('span');track.className='cursor-track';
- track.style.left=(x-Math.sin(angle)*side)+'px';track.style.top=(y+Math.cos(angle)*side)+'px';track.style.setProperty('--heading',(angle*180/Math.PI+90)+'deg');
- track.innerHTML=titleTracks.firstElementChild.innerHTML;
- track.addEventListener('animationend',()=>track.remove(),{once:true});cursorTracks.append(track);
- while(cursorTracks.children.length>18)cursorTracks.firstElementChild.remove();
- lastTrack={x,y};trackSide*=-1;
+let lastTrack=null,trackSide=1,touchTrailPointer=null;
+function clearCursorTracks(){cursorTracks.replaceChildren();lastTrack=null;touchTrailPointer=null}
+function canLeaveTracks(){return ['title','collection'].includes(screen)&&!titleMotion?.matches}
+function addTrackEffect(effect){effect.addEventListener('animationend',()=>effect.remove(),{once:true});cursorTracks.append(effect);while(cursorTracks.children.length>18)cursorTracks.firstElementChild.remove()}
+function stampFootprint(x,y,heading,touch=false){const track=document.createElement('span');track.className='cursor-track'+(touch?' touch-track':'');track.style.left=x+'px';track.style.top=y+'px';track.style.setProperty('--heading',heading+'deg');track.innerHTML=titleTracks.firstElementChild.innerHTML;addTrackEffect(track)}
+function beginTouchTrail(e){if(!canLeaveTracks()||e.isPrimary===false||!['touch','pen'].includes(e.pointerType))return;touchTrailPointer=e.pointerId;lastTrack={x:e.clientX,y:e.clientY};trackSide=1;
+ stampFootprint(e.clientX-11,e.clientY+9,-18,true);stampFootprint(e.clientX+11,e.clientY-9,18,true);
+ const ring=document.createElement('span');ring.className='cursor-tap-ring';ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px';addTrackEffect(ring);
 }
-for(const surface of [$('title-screen'),$('collection-screen')]){surface.addEventListener('pointermove',leaveCursorTrack);surface.addEventListener('pointerleave',()=>{lastTrack=null})}
+function leaveCursorTrack(e){
+ if(!canLeaveTracks()||e.isPrimary===false)return;
+ const touch=['touch','pen'].includes(e.pointerType);if(touch&&touchTrailPointer!==e.pointerId)return;
+ const x=e.clientX,y=e.clientY;if(!lastTrack){lastTrack={x,y};return}
+ const dx=x-lastTrack.x,dy=y-lastTrack.y,distance=Math.hypot(dx,dy);if(distance<(touch?30:34))return;
+ const angle=Math.atan2(dy,dx),side=trackSide*(touch?12:9);stampFootprint(x-Math.sin(angle)*side,y+Math.cos(angle)*side,angle*180/Math.PI+90,touch);lastTrack={x,y};trackSide*=-1;
+}
+function endTouchTrail(e){if(e.pointerId===touchTrailPointer){touchTrailPointer=null;lastTrack=null}}
+for(const surface of [$('title-screen'),$('collection-screen')]){surface.addEventListener('pointerdown',beginTouchTrail,{passive:true});surface.addEventListener('pointermove',leaveCursorTrack,{passive:true});surface.addEventListener('pointerup',endTouchTrail,{passive:true});surface.addEventListener('pointercancel',endTouchTrail,{passive:true});surface.addEventListener('pointerleave',()=>{lastTrack=null;touchTrailPointer=null},{passive:true})}
 const screenBeforeCursorTracks=showScreen;showScreen=function(next){if(next!==screen)clearCursorTracks();screenBeforeCursorTracks(next)};
 titleMotion?.addEventListener('change',clearCursorTracks);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)clearCursorTracks()});
