@@ -27,8 +27,7 @@ const collectionKey='dino-collection-v2';
 function cleanCollection(value){const counts={},shiny={};for(const d of catalog){const n=value?.counts?.[d.id],s=value?.shiny?.[d.id];if(Number.isSafeInteger(n)&&n>0)counts[d.id]=n;if(Number.isSafeInteger(s)&&s>0&&counts[d.id])shiny[d.id]=Math.min(s,n)}return {counts,shiny,draws:Number.isSafeInteger(value?.draws)&&value.draws>=0?value.draws:0,duplicates:Math.min(2,Math.max(0,Number.isInteger(value?.duplicates)?value.duplicates:0))}}
 let collection;
 try{const stored=localStorage.getItem(collectionKey);if(stored)collection=cleanCollection(JSON.parse(stored))}catch{}
-if(!collection){collection=cleanCollection({});for(const index of progress.found){const entry=catalog.find(d=>d.name===dinosaurs[index]?.name);if(entry)collection.counts[entry.id]=1}}
-if(!Object.keys(collection.counts).length)collection.counts['plant-0']=1;
+if(!collection){collection=cleanCollection({});for(const index of progress.found){const entry=catalog.find(d=>d.name===dinosaurs[index]?.name);if(entry)collection.counts[entry.id]=1}if(!Object.keys(collection.counts).length)collection.counts['plant-0']=1;}
 function saveCollection(){try{localStorage.setItem(collectionKey,JSON.stringify(collection));$('save-warning').textContent=''}catch{$('save-warning').textContent='ずかんを ほぞんできませんでした。パパ・ママに しらせてね。'}}
 const ordinary=catalog.filter(d=>d.category!=='secret');
 function rollEgg(state=collection,rng=Math.random){
