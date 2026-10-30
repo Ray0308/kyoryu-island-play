@@ -24,26 +24,29 @@ for(let i=catalog.length-1;i>=0;i--)if(catalog[i].category!=='secret'&&!selected
 function catalogGroup(key){return catalog.filter(d=>d.category===key)}
 
 const collectionKey='dino-collection-v2';
-function cleanCollection(value){const counts={},shiny={};for(const d of catalog){const n=value?.counts?.[d.id],s=value?.shiny?.[d.id];if(Number.isSafeInteger(n)&&n>0)counts[d.id]=n;if(Number.isSafeInteger(s)&&s>0&&counts[d.id])shiny[d.id]=Math.min(s,n)}return {counts,shiny,draws:Number.isSafeInteger(value?.draws)&&value.draws>=0?value.draws:0,duplicates:Math.min(2,Math.max(0,Number.isInteger(value?.duplicates)?value.duplicates:0))}}
+function cleanCollection(value){const counts={},shiny={};for(const d of catalog){const n=value?.counts?.[d.id],s=value?.shiny?.[d.id];if(Number.isSafeInteger(n)&&n>0)counts[d.id]=n;if(Number.isSafeInteger(s)&&s>0&&counts[d.id])shiny[d.id]=Math.min(s,n)}const result={counts,shiny,draws:Number.isSafeInteger(value?.draws)&&value.draws>=0?value.draws:0,duplicates:Math.min(2,Math.max(0,Number.isInteger(value?.duplicates)?value.duplicates:0))};const pending=value?.pendingEgg;if(pending&&pending.draw===result.draws&&catalog.some(d=>d.id===pending.id)&&typeof pending.shiny==='boolean')result.pendingEgg={id:pending.id,shiny:pending.shiny,draw:pending.draw};return result}
 let collection;
 try{const stored=localStorage.getItem(collectionKey);if(stored)collection=cleanCollection(JSON.parse(stored))}catch{}
 if(!collection){collection=cleanCollection({});for(const index of progress.found){const entry=catalog.find(d=>d.name===dinosaurs[index]?.name);if(entry)collection.counts[entry.id]=1}if(!Object.keys(collection.counts).length)collection.counts['plant-0']=1;}
 function saveCollection(){try{localStorage.setItem(collectionKey,JSON.stringify(collection));$('save-warning').textContent=''}catch{$('save-warning').textContent='ずかんを ほぞんできませんでした。パパ・ママに しらせてね。'}}
 const ordinary=catalog.filter(d=>d.category!=='secret');
 function rollEgg(state=collection,rng=Math.random){
- const found=ordinary.filter(d=>state.counts[d.id]),missing=ordinary.filter(d=>!state.counts[d.id]),secrets=catalog.filter(d=>d.category==='secret'),secretMissing=secrets.filter(d=>!state.counts[d.id]);
+ const tuning=rewardDrawSettings,eligible=ordinary.filter(d=>tuning.weights[d.category]>0),found=eligible.filter(d=>state.counts[d.id]),missing=eligible.filter(d=>!state.counts[d.id]),allFound=ordinary.filter(d=>state.counts[d.id]),secrets=catalog.filter(d=>d.category==='secret'),secretMissing=secrets.filter(d=>!state.counts[d.id]);
  let pool;
- if(found.length>=10&&secretMissing.length===secrets.length)pool=secretMissing;
- else if((state.draws<3||state.duplicates>=2)&&missing.length)pool=missing;
- else if(rng()<.02)pool=secrets;
- else pool=missing.length&&(!found.length||rng()<.7)?missing:found;
- if(!pool.length)pool=ordinary;
- return {id:pool[Math.min(pool.length-1,Math.floor(rng()*pool.length))].id,shiny:rng()<.05};
+ if(tuning.guarantees&&tuning.secretRate>0&&allFound.length>=10&&secretMissing.length===secrets.length)pool=secretMissing;
+ else if(tuning.guarantees&&(state.draws<3||state.duplicates>=2)&&missing.length)pool=missing;
+ else if(rng()<tuning.secretRate/100)pool=secrets;
+ else pool=missing.length&&(!found.length||rng()<tuning.newRate/100)?missing:found;
+ if(!pool.length)pool=eligible;
+ const weight=d=>d.category==='secret'?1:tuning.weights[d.category],total=pool.reduce((n,d)=>n+weight(d),0);let point=rng()*total,selected=pool[pool.length-1];for(const d of pool){point-=weight(d);if(point<0){selected=d;break}}
+ return {id:selected.id,shiny:rng()<tuning.shinyRate/100};
 }
-function claimEgg(egg){const entry=catalog.find(d=>d.id===egg.id);if(!entry)throw Error('Unknown egg');const fresh=!collection.counts[egg.id],firstShiny=egg.shiny&&!collection.shiny[egg.id];collection.counts[egg.id]=(collection.counts[egg.id]||0)+1;if(egg.shiny)collection.shiny[egg.id]=(collection.shiny[egg.id]||0)+1;collection.draws++;collection.duplicates=fresh?0:Math.min(2,collection.duplicates+1);saveCollection();return {entry,fresh,firstShiny,count:collection.counts[egg.id]}}
+function getPendingEgg(){if(!collection.pendingEgg){collection.pendingEgg={...rollEgg(),draw:collection.draws};saveCollection()}return {id:collection.pendingEgg.id,shiny:collection.pendingEgg.shiny}}
+
+function claimEgg(egg){const entry=catalog.find(d=>d.id===egg.id);if(!entry)throw Error('Unknown egg');const fresh=!collection.counts[egg.id],firstShiny=egg.shiny&&!collection.shiny[egg.id];collection.counts[egg.id]=(collection.counts[egg.id]||0)+1;if(egg.shiny)collection.shiny[egg.id]=(collection.shiny[egg.id]||0)+1;collection.draws++;delete collection.pendingEgg;collection.duplicates=fresh?0:Math.min(2,collection.duplicates+1);saveCollection();return {entry,fresh,firstShiny,count:collection.counts[egg.id]}}
 function eggMarkup(egg){const d=catalog.find(d=>d.id===egg.id),c=categories[d.category];return `<span class="colored-egg egg-${d.category}${egg.shiny?' shiny-egg':''}" style="--egg-color:${c.color}" role="img" aria-label="${c.label}の${egg.shiny?'ひかる ':''}たまご"><span aria-hidden="true">${c.icon}</span></span>`}
 function catalogArt(d){if(d.original)return art(d.original);return `<div class="catalog-portrait portrait-${d.category}" role="img" aria-label="${d.name}の なかまマーク"><span>${d.secretIcon||{meat:'🦖',plant:'🦕',sea:'🌊',sky:'🪽',insect:'🪲',animal:'🐾',secret:'✨'}[d.category]}</span><small>${d.category==='secret'?categories[d.secretOrigin].label+'の とくべつな すがた':categories[d.category].label}</small></div>`}
-let activeCategory='meat',currentEgg=rollEgg();
+let activeCategory='meat',currentEgg=getPendingEgg();
 const tabs=document.createElement('div');tabs.id='catalog-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','ずかんの なかま');$('collection-grid').before(tabs);
 const cardDetails=document.createElement('section');cardDetails.id='card-details';cardDetails.hidden=true;cardDetails.innerHTML='<div id="detail-art"></div><div><h3 id="detail-name"></h3><p id="detail-info"></p><div class="controls"><button id="normal-card" class="secondary">ふつう</button><button id="shiny-card" class="go">✨ キラ</button><button id="close-card" class="secondary">とじる</button></div></div>';$('collection-grid').after(cardDetails);
 tabs.addEventListener('keydown',e=>{const buttons=[...tabs.children],current=buttons.indexOf(document.activeElement);if(current<0)return;let index;if(e.key==='ArrowRight'||e.key==='ArrowDown')index=(current+1)%buttons.length;else if(e.key==='ArrowLeft'||e.key==='ArrowUp')index=(current+buttons.length-1)%buttons.length;else if(e.key==='Home')index=0;else if(e.key==='End')index=buttons.length-1;else return;e.preventDefault();buttons[index].click()});
@@ -66,7 +69,7 @@ const nextAfterReward=$('reward-next').onclick;$('reward-next').onclick=()=>{if(
 const previewButton=document.createElement('button');previewButton.id='preview-shiny';previewButton.className='go';previewButton.textContent='✨ キラ演出を確認（保存しない）';
 previewButton.onclick=()=>{if(busy)return;const entry=catalog.find(d=>d.name==='ティラノサウルス');renderEggReward({id:entry.id,shiny:true},{entry,fresh:false,firstShiny:true,count:collection.counts[entry.id]||0},true)};
 
-const resetBeforeCatalog=reset;reset=function(){currentEgg=rollEgg();resetBeforeCatalog()};$('clear').onclick=reset;
+const resetBeforeCatalog=reset;reset=function(){currentEgg=getPendingEgg();resetBeforeCatalog()};$('clear').onclick=reset;
 const drawBeforeCatalog=draw;draw=function(){drawBeforeCatalog();if(!editing){const cell=$('board').querySelector('.egg-cell');if(cell){const marks=[...cell.querySelectorAll('.route-mark')];cell.innerHTML=eggMarkup(currentEgg);cell.append(...marks)}}};
 const settings=document.createElement('details');settings.id='reward-settings';settings.innerHTML='<summary>たまごと ごほうびの しくみ</summary><p>通常は６カテゴリ各５種類、全30種類＋空想のシークレット６種類（各カテゴリから１種類ずつ）。クリアごとに抽選します。同じステージでも再会回数が増えます。初めの３回は新発見、かぶりが２回続くと次は未発見の通常種（残っている場合）。通常種が10種類になった次のクリアで、最初のシークレットに会えます。</p><p>卵は生き物のカードを発見する「ふしぎな宝箱」という設定です。通常抽選のシークレットは２％。光る卵はカテゴリと別に５％で抽選します。光っても光らなくても、図鑑の同じ枠に記録します。海にはサメや海の爬虫類がいます。翼竜は恐竜とは別の仲間です。「むかしの むし」には、昆虫以外の節足動物も含みます。</p>';developmentTools.append(settings);settings.append(previewButton);
 saveCollection();updateCounts();draw();

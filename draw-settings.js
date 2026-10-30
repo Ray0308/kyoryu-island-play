@@ -1,0 +1,5 @@
+// Persisted administrator tuning. Rates are percentages; category weights are relative.
+const rewardSettingsKey='dino-draw-settings-v1';
+const defaultDrawSettings={secretRate:2,shinyRate:5,newRate:70,guarantees:true,weights:{meat:1,plant:1,sea:1,sky:1,insect:1,animal:1}};
+function cleanDrawSettings(value){const result=JSON.parse(JSON.stringify(defaultDrawSettings));for(const key of ['secretRate','shinyRate','newRate'])if(typeof value?.[key]==='number'&&Number.isFinite(value[key])&&value[key]>=0&&value[key]<=100)result[key]=value[key];if(typeof value?.guarantees==='boolean')result.guarantees=value.guarantees;for(const key of Object.keys(result.weights))if(Number.isInteger(value?.weights?.[key])&&value.weights[key]>=0&&value.weights[key]<=100)result.weights[key]=value.weights[key];if(Object.values(result.weights).every(n=>n===0))result.weights={...defaultDrawSettings.weights};return result}
+let rewardDrawSettings=cleanDrawSettings(null);try{rewardDrawSettings=cleanDrawSettings(JSON.parse(localStorage.getItem(rewardSettingsKey)))}catch{}

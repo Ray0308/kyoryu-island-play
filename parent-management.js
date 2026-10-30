@@ -9,7 +9,7 @@ $('confirm-catalog-reset').onclick=()=>{
  const original=[collectionKey,progressKey,'dino-test-complete-2026-10-29'].map(k=>[k,localStorage.getItem(k)]);
  try{localStorage.setItem(collectionKey,JSON.stringify(empty));localStorage.setItem(progressKey,JSON.stringify(nextProgress));localStorage.setItem('dino-test-complete-2026-10-29','done')}
  catch{for(const [k,v] of original){try{if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch{}}$('catalog-reset-status').textContent='保存できませんでした。端末の空き容量を確認してください。';catalogResetDialog.close();return}
- collection=empty;progress=nextProgress;currentEgg=rollEgg();cardDetails.hidden=true;saveProgress();saveCollection();updateCounts();draw();$('catalog-reset-status').textContent='図鑑をリセットしました。';catalogResetDialog.close();$('reset-catalog').focus();
+ collection=empty;progress=nextProgress;currentEgg=getPendingEgg();cardDetails.hidden=true;saveProgress();saveCollection();updateCounts();draw();$('catalog-reset-status').textContent='図鑑をリセットしました。';catalogResetDialog.close();$('reset-catalog').focus();
 };
 const adminHeading=document.createElement('h2');adminHeading.textContent='管理者用の確認・設定';developmentTools.prepend(adminHeading);
 const adminComplete=document.createElement('button');adminComplete.id='admin-complete-catalog';adminComplete.className='go';adminComplete.textContent='テスト用：全図鑑COMPLETE（通常・キラ）';adminHeading.after(adminComplete);
