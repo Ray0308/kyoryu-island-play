@@ -1,0 +1,20 @@
+// A dedicated transparent sprite replaces the platform-dependent emoji.
+actor.textContent='';
+const characterShadow=document.createElement('span');characterShadow.className='character-shadow';
+const characterBody=document.createElement('span');characterBody.className='character-body';
+const characterImage=document.createElement('img');characterImage.src='assets/player-explorer.png';characterImage.alt='';characterImage.draggable=false;characterImage.className='character-image';characterBody.append(characterImage);
+const characterEmote=document.createElement('span');characterEmote.className='character-emote';characterEmote.textContent='♪';
+actor.append(characterShadow,characterBody,characterEmote);
+const coachFace=coach.querySelector('.coach-face');coachFace.textContent='';const coachImage=characterImage.cloneNode();coachFace.append(coachImage);
+const beforeCharacterDraw=draw;let previousPosition=[...pos],facing='right';
+draw=function(){beforeCharacterDraw();if(editing)return;
+  if(!busy&&!queue.length)facing='right';
+  if(busy&&pos[0]!==previousPosition[0])facing=pos[0]>previousPosition[0]?'right':'left';
+  previousPosition=[...pos];
+  actor.dataset.facing=facing;
+  const mood=won?'happy':failedCommand>=0?'confused':busy?'walking':'idle';
+  actor.dataset.mood=mood;characterEmote.textContent=mood==='happy'?'♥':mood==='confused'?'？':'♪';
+  characterEmote.hidden=mood==='walking'||mood==='idle';
+  coachFace.dataset.mood=mood;
+};
+draw();

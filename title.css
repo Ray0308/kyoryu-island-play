@@ -1,0 +1,21 @@
+/* An adventure invitation, with the same hero the child controls in play. */
+#title-screen{max-width:none;position:relative;isolation:isolate;overflow:hidden;padding:clamp(24px,5vw,80px);gap:clamp(20px,4vw,70px);background:radial-gradient(ellipse at 18% 15%,#fffbe3 0%,transparent 38%),linear-gradient(#bcebdc 0%,#e8f5cc 65%,#8bc39a 100%)}
+#title-screen:before,#title-screen:after{content:'';position:absolute;z-index:-1;pointer-events:none;border-radius:50%}
+#title-screen:before{width:120vw;height:45vh;bottom:-26vh;left:-35vw;background:#519c79;transform:rotate(6deg);box-shadow:70vw -4vh 0 6vh #75b68a}
+#title-screen:after{width:26vw;height:48vh;left:-20vw;top:-20vh;background:#286b56;transform:rotate(-35deg);box-shadow:110vw 45vh 0 2vw #357c60}
+#title-screen .title-art{width:100%;height:min(72dvh,640px);max-height:none;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none;transform:none;overflow:visible;background:radial-gradient(ellipse at 50% 88%,#2b785d45,transparent 52%);animation:none}
+.title-dinosaur{position:absolute;left:2%;bottom:9%;width:84%;height:88%;object-fit:contain;filter:drop-shadow(0 18px 12px #205d4f33)}
+.title-egg{position:absolute;right:1%;bottom:14%;font-size:clamp(50px,7vw,100px);filter:drop-shadow(0 8px 5px #516e3444);transform:rotate(12deg)}
+.island-sun{position:absolute;left:9%;top:2%;width:100px;height:100px;border-radius:50%;background:#ffe49a;box-shadow:0 0 0 18px #fff2bc55,0 0 80px #fff1aa}
+#title-screen .sun-label{bottom:0;left:5%;right:5%;border-radius:30px;background:#fff8dfdf;color:#49785c;padding:12px 16px;box-shadow:0 5px 18px #3d6b4312;font-size:clamp(12px,1.3vw,17px)}
+#title-screen .title-copy{gap:22px;max-width:640px}
+#title-screen .eyebrow{color:#326e57;background:#ffffff8c;border:1px solid #fff9;padding:9px 16px;border-radius:30px;font-size:clamp(11px,1.2vw,15px);letter-spacing:.08em}
+#title-screen h2{font-size:clamp(32px,4.5vw,68px);line-height:1.4;text-shadow:0 3px #fff6d6;letter-spacing:.04em}
+#title-screen h2 em{color:#b87825;font-size:.72em}
+#title-screen .title-copy p{font-size:clamp(14px,1.5vw,20px);color:#417058}
+#title-screen .big-button{width:min(100%,380px);border:3px solid #fff0b2;box-shadow:0 7px 0 #ba8433,0 14px 28px #68843b26}
+#title-screen .book-button{width:min(100%,380px);border-color:#e2cda0;background:#fff9e8;box-shadow:0 4px 0 #c3bd8c}
+#title-screen small{color:#46755d;font-weight:bold}
+@media(prefers-reduced-motion:no-preference){.title-dinosaur{animation:title-welcome 4s ease-in-out infinite}.title-egg{animation:title-egg-rock 3s ease-in-out infinite}@keyframes title-welcome{50%{transform:translateY(-7px) rotate(1deg)}}@keyframes title-egg-rock{0%,70%,100%{transform:rotate(12deg)}80%{transform:rotate(3deg)}90%{transform:rotate(18deg)}}}
+@media(max-height:720px) and (min-width:701px){#title-screen{padding:24px 5vw}#title-screen .title-copy{gap:14px}#title-screen h2{font-size:clamp(30px,4vw,50px)}#title-screen .title-copy p{font-size:15px}#title-screen .big-button{min-height:54px;padding:12px 22px}#title-screen .book-button{padding:12px 20px}.island-sun{width:70px;height:70px}}
+@media(max-width:700px){#title-screen{padding:14px 20px 38px;gap:10px;grid-template-rows:minmax(0,.85fr) minmax(0,1fr)}#title-screen .title-art{height:100%;width:min(100%,400px);margin:auto}#title-screen .title-copy{gap:10px;align-items:center;text-align:center}#title-screen .eyebrow{font-size:10px;padding:5px 12px}#title-screen h2{font-size:29px;line-height:1.3}#title-screen .title-copy p{font-size:12px;line-height:1.5}#title-screen .sun-label{font-size:10px;padding:6px 8px;bottom:0}.title-dinosaur{bottom:10%;height:89%;left:5%;width:78%}.title-egg{font-size:48px;right:5%;bottom:17%}.island-sun{width:45px;height:45px;left:14%;top:4%;box-shadow:0 0 0 10px #fff2bc55}#title-screen .big-button{font-size:19px;padding:10px 20px;min-height:48px}#title-screen .book-button{font-size:12px;padding:10px}#title-screen small{font-size:10px}}

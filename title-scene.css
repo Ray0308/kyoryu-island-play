@@ -1,0 +1,32 @@
+/* A cinematic field-journal cover, contained within the existing viewport. */
+#title-screen .title-art{isolation:isolate;border-radius:18px 18px 64px 18px;box-shadow:0 24px 65px #0007,0 0 65px #c8ad5a12}
+#title-screen .title-art-label{z-index:4;backdrop-filter:blur(6px)}
+.title-scene{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity 1.6s ease,visibility 1.6s;pointer-events:none}
+.title-scene.is-current{opacity:1;visibility:visible;z-index:1}
+#title-screen .title-scene-image{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:none;transform:scale(1);animation:none}
+.scene-caption{position:absolute;inset:auto 0 0;padding:70px 25px 65px;text-align:left;background:linear-gradient(transparent,#0b1c16eb);color:#f7ecd4;display:grid;gap:6px}
+.scene-caption>span{font-size:clamp(10px,1vw,13px);letter-spacing:.16em;color:#e3c895}
+.scene-caption strong{font-size:clamp(18px,2.2vw,30px);letter-spacing:.08em;text-shadow:0 2px 8px #0008}
+.title-scene-controls{position:absolute;bottom:16px;left:19px;display:flex;align-items:center;gap:3px;z-index:5}
+.title-scene-controls button{display:grid;place-items:center;min-width:36px;min-height:32px;padding:6px;background:transparent;color:#ead5a7;border-radius:6px;box-shadow:none}
+.title-scene-dot span{width:7px;height:7px;border-radius:10px;background:#f8edd966;transition:width .4s,background .4s}
+.title-scene-dot[aria-pressed=true] span{width:27px;background:#e7c17c}
+
+.title-atmosphere{position:absolute;inset:0;overflow:hidden;z-index:2;pointer-events:none;background:linear-gradient(125deg,#f8e5a013,transparent 45%)}
+.title-atmosphere i{position:absolute;width:4px;height:4px;border-radius:50%;background:#ffe4a4;box-shadow:0 0 10px #ffe4a4;opacity:.35;left:18%;top:66%}
+.title-atmosphere i:nth-child(2){left:69%;top:36%;animation-delay:-3s}.title-atmosphere i:nth-child(3){left:44%;top:77%;animation-delay:-7s}.title-atmosphere i:nth-child(4){left:84%;top:60%;animation-delay:-5s}.title-atmosphere i:nth-child(5){left:30%;top:30%;animation-delay:-9s}
+#title-screen .title-copy{position:relative;z-index:2}
+#title-screen .title-tracks{position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none}
+.title-tracks>span{position:absolute;width:clamp(30px,4.5vw,68px);height:auto;left:calc(53% + var(--track)*6%);bottom:calc(1% + var(--track)*9%);transform:rotate(32deg);opacity:.065;filter:drop-shadow(0 1px #e7d6a433)}
+.title-tracks>span:nth-child(even){translate:0 -35px;transform:rotate(15deg)}.title-tracks svg{display:block;width:100%;fill:#d6be8a}
+#title-screen .big-button{position:relative;overflow:hidden;box-shadow:0 4px 0 #74542c,0 8px 28px #d3a05520}
+#title-screen .big-button:after{content:'';position:absolute;inset:0;transform:translateX(-150%) skewX(-20deg);background:linear-gradient(90deg,transparent,#fff5,transparent);pointer-events:none}
+@media(prefers-reduced-motion:no-preference){.title-scene.is-current .title-scene-image{animation:expedition-drift 14s ease-out both}.title-atmosphere i{animation:island-motes 12s ease-in-out infinite}#title-screen .big-button:after{animation:expedition-glint 8s 2s infinite}.title-tracks>span{animation:track-appear 9s calc(var(--track)*.65s) infinite}@keyframes expedition-drift{to{transform:scale(1.035)}}@keyframes island-motes{0%,100%{opacity:0;translate:0 10px}35%,65%{opacity:.65}85%{translate:12px -28px}}@keyframes expedition-glint{0%,80%{transform:translateX(-150%) skewX(-20deg)}100%{transform:translateX(150%) skewX(-20deg)}}@keyframes track-appear{0%,100%{opacity:.04}25%,65%{opacity:.13}}}
+@media(prefers-reduced-motion:reduce){.title-scene{transition:none}}
+@media(max-width:700px){#title-screen .title-art{border-radius:12px 12px 36px 12px}.scene-caption{padding:45px 15px 44px}.scene-caption strong{font-size:18px}.scene-caption>span{font-size:9px}.title-scene-controls{left:9px;bottom:7px;gap:0}.title-scene-controls button{min-width:32px;min-height:28px}.title-tracks>span{left:calc(4% + var(--track)*14%);bottom:calc(5% + var(--track)*3%);width:35px}}
+
+.cursor-tracks{position:fixed;inset:0;z-index:15;pointer-events:none;overflow:hidden}
+.cursor-track{position:absolute;width:27px;height:34px;margin:-17px 0 0 -13px;color:#dfbd76;filter:drop-shadow(0 1px 2px #10221999);transform:rotate(var(--heading));animation:cursor-track-fade 1.5s ease-out forwards}
+.cursor-track svg{display:block;width:100%;height:100%;fill:currentColor}
+@keyframes cursor-track-fade{0%{opacity:.65;scale:.8}18%{opacity:.55;scale:1}100%{opacity:0;scale:1}}
+@media(prefers-reduced-motion:reduce){.cursor-tracks{display:none}}

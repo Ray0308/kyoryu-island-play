@@ -1,0 +1,57 @@
+// A parent connects one repository-scoped key on each playing device.
+const syncKeys={auth:'dino-github-auth-v1',meta:'dino-github-meta-v1'};
+const syncPanel=document.createElement('details');syncPanel.id='github-sync';syncPanel.innerHTML=`<summary>セーブとステージの共有</summary><p>遊んだ記録と、保存・削除した自作ステージをGitHubへ自動保存します。</p><p id="github-sync-status" role="status">この端末では未接続です。端末内の保存は有効です。</p><form id="github-connect-form"><label for="github-save-key">保存用の鍵</label><input id="github-save-key" type="password" autocomplete="off" spellcheck="false" placeholder="この端末でのみ使用"><label class="remember-key"><input id="github-remember-key" type="checkbox">この端末に接続を記憶する</label><button class="secondary" type="submit">GitHub保存をつなぐ</button></form><div class="controls"><button id="github-load" class="secondary" disabled>GitHubから読み込む</button><button id="github-use-local" class="secondary" disabled>この端末の記録を使う</button><button id="github-retry" class="secondary" disabled>未送信の記録を送る</button><button id="github-disconnect" class="secondary" disabled>接続を解除</button></div><details><summary>最初の接続方法</summary><p>GitHubのRay0308で、kyoryu-islandだけを対象にしたFine-grained tokenを作り、ContentsをRead and writeに設定します。作った鍵を上の欄へ入力してください。鍵はゲームやセーブのファイルに書き込みません。</p><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">GitHubで保存用の鍵を作る</a><p>保存先：Ray0308/kyoryu-island の codex/save-data ブランチ。端末への記憶を選ばない場合は、このタブを閉じるまでの接続です。</p></details>`;parent.append(syncPanel);
+const syncStatus=message=>$('github-sync-status').textContent=message;
+let syncClient=null,syncReady=false,syncWriting=false,syncScheduled=false,syncApplying=false,syncConnecting=false,syncRetryable=false,syncEpoch=0;
+let syncMeta={shas:{},pending:{}};
+try{const m=JSON.parse(localStorage.getItem(syncKeys.meta));if(m&&typeof m==='object')syncMeta={shas:Object.fromEntries(['progress','stages'].filter(k=>typeof m.shas?.[k]==='string').map(k=>[k,m.shas[k]])),pending:Object.fromEntries(['progress','stages'].filter(k=>m.pending?.[k]===true).map(k=>[k,true]))}}catch{}
+function storeSyncMeta(){try{localStorage.setItem(syncKeys.meta,JSON.stringify(syncMeta))}catch{syncStatus('端末の保存領域を確認してください')}}
+function syncSnapshot(kind){return kind==='progress'?{version:1,kind,progress:clone(progress),collection:cleanCollection(collection)}:{version:1,kind,stages:clone(saved)}}
+function validateSyncSnapshot(kind,data){if(!data||data.version!==1||data.kind!==kind)throw Error('対応していないセーブ形式です');
+ if(kind==='progress'){const p=data.progress,c=data.collection;if(!p||!Array.isArray(p.found)||!p.found.every(n=>Number.isInteger(n)&&n>=0&&n<dinosaurs.length)||!Array.isArray(p.cleared)||!p.cleared.every(s=>typeof s==='string'&&s.length<=200)||p.cleared.length>10000||typeof p.sound!=='boolean'||!c||!c.counts||Array.isArray(c.counts)||!c.shiny||Array.isArray(c.shiny)||!Object.values(c.counts).every(n=>Number.isSafeInteger(n)&&n>=0)||!Object.values(c.shiny).every(n=>Number.isSafeInteger(n)&&n>=0))throw Error('進行データを読み込めません');return {version:1,kind,progress:{found:[...new Set(p.found)],cleared:[...new Set(p.cleared)],sound:p.sound},collection:cleanCollection(c)}}
+ if(!Array.isArray(data.stages)||data.stages.length>100||!data.stages.every(l=>validStage(l)&&typeof l.name==='string'&&l.name.length<=30&&difficulty(l)))throw Error('ステージの形式または配置を確認してください');return {version:1,kind,stages:data.stages.map(l=>({name:l.name,s:clone(l.s),g:clone(l.g),r:clone(l.r)}))}
+}
+function updateSyncButtons(){for(const id of ['github-load','github-use-local','github-disconnect'])$(id).disabled=!syncClient||syncWriting||syncConnecting;$('github-retry').disabled=!syncClient||(!syncReady&&!syncRetryable)||syncWriting||syncConnecting;syncPanel.querySelector('button[type=submit]').disabled=syncWriting||syncConnecting}
+function markGitHubDirty(kind){if(syncApplying)return;syncMeta.pending[kind]=true;storeSyncMeta();if(syncReady)scheduleGitHubSave()}
+function scheduleGitHubSave(){if(syncScheduled)return;syncScheduled=true;Promise.resolve().then(()=>{syncScheduled=false;return flushGitHubSaves()}).catch(()=>{})}
+async function flushGitHubSaves(){if(!syncClient||!syncReady||syncWriting)return;syncWriting=true;updateSyncButtons();const client=syncClient,epoch=syncEpoch;
+ try{for(const kind of ['progress','stages']){if(!syncMeta.pending[kind])continue;const snapshot=syncSnapshot(kind),fingerprint=JSON.stringify(snapshot);syncStatus('GitHubへ保存中…');const sha=await client.write(kind,snapshot);if(epoch!==syncEpoch)return;syncMeta.shas[kind]=sha;if(fingerprint===JSON.stringify(syncSnapshot(kind)))delete syncMeta.pending[kind];storeSyncMeta()}syncStatus(Object.keys(syncMeta.pending).length?'続きの記録を保存しています…':'GitHubに保存しました。');}
+ catch(error){syncReady=false;syncRetryable=!error.status||error.status>=500||error.status===429;syncStatus(error.message+'。未送信の記録はこの端末に残っています。');}
+ finally{syncWriting=false;updateSyncButtons();if(syncReady&&Object.keys(syncMeta.pending).length)scheduleGitHubSave()}
+}
+async function readGitHubPair(client){const results={};for(const kind of ['progress','stages']){const remote=await client.read(kind);results[kind]={sha:remote.sha,data:remote.data?validateSyncSnapshot(kind,remote.data):null}}return results}
+function acceptGitHubBaseline(pair){for(const kind of ['progress','stages']){syncMeta.shas[kind]=pair[kind].sha;syncClient.shas[kind]=pair[kind].sha}storeSyncMeta()}
+function applyGitHubPair(pair){if(busy||editing)throw Error('遊びやステージ編集を終えてから読み込んでください');
+ const nextProgress=pair.progress.data,nextStages=pair.stages.data;
+ const originals=[progressKey,collectionKey,storageKey].map(k=>[k,localStorage.getItem(k)]);
+ try{if(nextProgress){localStorage.setItem(progressKey,JSON.stringify(nextProgress.progress));localStorage.setItem(collectionKey,JSON.stringify(nextProgress.collection))}if(nextStages)localStorage.setItem(storageKey,JSON.stringify(nextStages.stages))}
+ catch{for(const [k,value] of originals){try{if(value===null)localStorage.removeItem(k);else localStorage.setItem(k,value)}catch{}}throw Error('端末に保存できません。空き容量を確認してください')}
+ syncApplying=true;
+ try{if(nextProgress){progress=nextProgress.progress;collection=nextProgress.collection;updateSound()}if(nextStages){saved=nextStages.stages;levels.splice(builtInCount,levels.length-builtInCount,...clone(saved))}if(nextProgress||nextStages){level=0;reset();if(screen==='collection')renderCatalog();updateCounts()}}
+ finally{syncApplying=false}
+}
+async function connectGitHub(token,remember,restore=false){if(syncWriting||syncConnecting)return;syncConnecting=true;syncRetryable=false;const epoch=++syncEpoch,client=new GitHubSaveClient(token);syncClient=client;syncReady=false;syncStatus('保存先を確認しています…');updateSyncButtons();
+ try{const pair=await readGitHubPair(client);if(epoch!==syncEpoch)return;
+ if(restore&&Object.keys(syncMeta.pending).length){if(['progress','stages'].some(k=>pair[k].sha!==(syncMeta.shas[k]??null)))throw Error('ほかの端末の更新があります。読み込む記録を選んでください');acceptGitHubBaseline(pair);syncReady=true;}
+ else if(restore&&screen==='title'&&!busy&&!editing){applyGitHubPair(pair);acceptGitHubBaseline(pair);syncReady=true;}
+ else{acceptGitHubBaseline(pair);if(pair.progress.data||pair.stages.data){syncStatus('GitHubに記録があります。「GitHubから読み込む」か「この端末の記録を使う」を選んでください。')}else{syncReady=true;syncMeta.pending={progress:true,stages:true};storeSyncMeta()}}
+ sessionStorage.setItem(syncKeys.auth,token);if(remember)localStorage.setItem(syncKeys.auth,token);else localStorage.removeItem(syncKeys.auth);$('github-save-key').value='';if(syncReady){syncStatus('自動保存につながりました。');scheduleGitHubSave()}
+ }catch(error){if(epoch===syncEpoch){syncReady=false;syncStatus(error.message)}}finally{syncConnecting=false;updateSyncButtons()}
+}
+$('github-connect-form').onsubmit=e=>{e.preventDefault();const token=$('github-save-key').value.trim();if(!token){syncStatus('保存用の鍵を入力してください');return}connectGitHub(token,$('github-remember-key').checked)};
+$('github-load').onclick=async()=>{if(!syncClient||syncWriting||busy||editing)return;if(!confirm('GitHubの記録をこの端末へ読み込みます。未送信の変更がある場合は置き換わります。よろしいですか？'))return;syncWriting=true;updateSyncButtons();try{const pair=await readGitHubPair(syncClient);applyGitHubPair(pair);acceptGitHubBaseline(pair);syncMeta.pending={};storeSyncMeta();syncReady=true;syncStatus('GitHubの記録を読み込みました。自動保存は有効です。')}catch(e){syncStatus(e.message)}finally{syncWriting=false;updateSyncButtons()}};
+$('github-use-local').onclick=async()=>{if(!syncClient||syncWriting)return;if(!confirm('この端末の記録でGitHubのセーブとステージを置き換えます。よろしいですか？'))return;syncWriting=true;updateSyncButtons();try{acceptGitHubBaseline(await readGitHubPair(syncClient));syncMeta.pending={progress:true,stages:true};storeSyncMeta();syncReady=true}catch(e){syncStatus(e.message)}finally{syncWriting=false;updateSyncButtons();if(syncReady)scheduleGitHubSave()}};
+$('github-retry').onclick=()=>{if(syncRetryable){syncReady=true;syncRetryable=false}scheduleGitHubSave()};
+$('github-disconnect').onclick=()=>{if(syncWriting)return;++syncEpoch;syncClient=null;syncReady=false;syncRetryable=false;localStorage.removeItem(syncKeys.auth);sessionStorage.removeItem(syncKeys.auth);$('github-save-key').value='';syncStatus('接続を解除しました。端末内の保存は続けます。');updateSyncButtons()};
+const progressBeforeGitHub=saveProgress;saveProgress=function(){progressBeforeGitHub();markGitHubDirty('progress')};
+const collectionBeforeGitHub=saveCollection;saveCollection=function(){collectionBeforeGitHub();markGitHubDirty('progress')};
+for(const id of ['save-stage','delete-stage']){const before=$(id).onclick;$(id).onclick=function(...args){const old=JSON.stringify(saved);const result=before.apply(this,args);if(JSON.stringify(saved)!==old)markGitHubDirty('stages');return result}}
+window.addEventListener('online',()=>{if(syncClient&&!syncReady){connectGitHub(syncClient.token,!!localStorage.getItem(syncKeys.auth),true)}else scheduleGitHubSave()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&Object.keys(syncMeta.pending).length&&syncReady)scheduleGitHubSave()});
+try{const token=sessionStorage.getItem(syncKeys.auth)||localStorage.getItem(syncKeys.auth);if(token&&window.fetch)connectGitHub(token,!!localStorage.getItem(syncKeys.auth),true)}catch{}
+// Pick up a parent's stage changes when starting another adventure, without touching the child's progress.
+async function refreshGitHubStages(){if(!syncClient||!syncReady||syncWriting||busy||editing||syncMeta.pending.stages)return;const client=syncClient,epoch=syncEpoch;
+ try{const remote=await client.read('stages');if(epoch!==syncEpoch||syncMeta.pending.stages||busy||editing||!remote.data||remote.sha===syncMeta.shas.stages)return;const data=validateSyncSnapshot('stages',remote.data);localStorage.setItem(storageKey,JSON.stringify(data.stages));saved=data.stages;levels.splice(builtInCount,levels.length-builtInCount,...clone(saved));if(level>=levels.length)level=builtInCount-1;syncMeta.shas.stages=remote.sha;client.shas.stages=remote.sha;storeSyncMeta();syncStatus('新しいステージを読み込みました。')}
+ catch(error){syncStatus(error.message+'。端末のステージで続けられます。')}
+}
+for(const id of ['start-adventure','reward-next']){const before=$(id).onclick;$(id).onclick=function(...args){if(syncClient&&syncReady&&!rewardPreview){const button=this,previous=button.textContent;button.disabled=true;button.textContent='じゅんびちゅう…';return refreshGitHubStages().then(()=>before.apply(button,args)).finally(()=>{button.textContent=previous;button.disabled=false})}return before.apply(this,args)}}

@@ -1,0 +1,59 @@
+:root{--ink:#293f35;--gold:#cfa057;--green:#47634e}
+body{color:var(--ink);background:radial-gradient(ellipse at 20% 0,#435c4d,transparent 65%),linear-gradient(145deg,#203c32,#172a24)}
+button{border-radius:9px}button:focus-visible{outline-color:#d9b672}
+#adventure{background:#e4e3d5}
+#title-screen{background:radial-gradient(ellipse at 8% 10%,#47624f66,transparent 55%),linear-gradient(120deg,#1c352b,#12271f 75%);color:#f3ecd9;gap:clamp(24px,4vw,64px)}
+#title-screen:before{inset:0;width:auto;height:auto;border-radius:0;background:repeating-linear-gradient(135deg,transparent 0 100px,#d9c59304 100px 101px);box-shadow:none;transform:none}
+#title-screen:after{display:none}
+#title-screen .title-art{height:min(72dvh,680px);background:#243e33;border:1px solid #aa946366;border-radius:12px;box-shadow:0 18px 55px #0005;overflow:hidden}
+#title-screen .title-dinosaur{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:none;animation:none}
+#title-screen .sun-label{left:0;right:0;bottom:0;padding:22px 14px 16px;border-radius:0;background:linear-gradient(transparent,#15291feb);color:#f7e9c7;font-size:clamp(11px,1.1vw,15px);box-shadow:none;font-weight:normal;letter-spacing:.08em}
+#title-screen .eyebrow{padding:0 0 10px;background:none;border:0;border-bottom:1px solid #b7a16d77;border-radius:0;color:#d5b77d;letter-spacing:.18em}
+#title-screen h2{font-family:'Yu Mincho','Hiragino Mincho ProN',serif;font-size:clamp(30px,4.2vw,62px);font-weight:900;line-height:1.6;color:#f4ebd8;text-shadow:0 3px 15px #0007;letter-spacing:.05em}
+#title-screen h2 em{color:#d8b477;font-family:'Yu Gothic',sans-serif;font-size:.46em;letter-spacing:.13em}
+#title-screen .title-copy p{color:#d3dacd;font-size:clamp(13px,1.35vw,18px);line-height:2}
+#title-screen small{color:#aebfae;font-weight:normal}
+#title-screen .big-button{background:linear-gradient(#dec18a,#bf914b);border:1px solid #edcd96;color:#332c1e;border-radius:8px;box-shadow:0 3px 0 #7a5b2f,0 10px 22px #0003;font-size:clamp(18px,2vw,24px)}
+#title-screen .book-button{background:#304b3e;border:1px solid #8c9c7b;color:#f1e7ce;border-radius:8px;box-shadow:0 3px 0 #12271e}
+#title-screen .collection-count{background:#172d23;color:#e6c487;border-radius:6px}
+#title-screen .title-parent-entry{background:#ffffff08;border-color:#a4b29833;color:#b8c5b5;border-radius:6px}
+/* The final title is built directly; reserve a square frame without stretching art. */
+#title-screen{padding:clamp(24px,4vw,64px);grid-template-columns:minmax(0,1.08fr) minmax(0,1fr)}
+#title-screen .title-art{width:min(100%,72dvh,680px);height:auto;aspect-ratio:1;justify-self:center;min-width:0;min-height:0;border:1px solid #c4aa7066;outline:1px solid #c4aa7022;outline-offset:7px}
+#title-screen .title-copy{min-width:0;gap:clamp(12px,2.3dvh,24px)}
+#title-screen .title-art-label{position:absolute;top:20px;left:20px;padding:7px 10px;border:1px solid #e9ddba88;background:#172a24b8;color:#f1e4c5;letter-spacing:.2em;font-size:10px;pointer-events:none}
+#title-screen h2{font-size:clamp(28px,3.7vw,58px);line-height:1.5;white-space:nowrap}
+#title-screen .title-actions{display:grid;gap:14px;width:min(100%,390px);margin:4px 0}
+#title-screen .title-actions button{width:100%;margin:0}
+#title-screen .big-button{min-height:66px}
+#title-screen .book-button{min-height:54px;font-size:clamp(13px,1.2vw,17px)}
+#title-screen small{font-size:clamp(10px,.85vw,12px);line-height:1.8}
+@media(max-height:650px) and (min-width:701px){#title-screen{padding:24px 5vw 44px}#title-screen .title-copy{gap:9px}#title-screen h2{font-size:clamp(25px,3.5vw,44px)}#title-screen .title-copy p{font-size:12px;line-height:1.6}#title-screen .title-actions{gap:9px;margin:0}#title-screen .big-button{min-height:50px;padding:10px 18px}#title-screen .book-button{min-height:42px;padding:8px 14px}#title-screen .eyebrow{font-size:10px}}
+@media(max-width:700px){#title-screen{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,.85fr) minmax(0,1fr);padding:14px 20px 42px;gap:12px}#title-screen .title-art{width:auto!important;height:100%!important;max-width:100%;aspect-ratio:1}#title-screen .title-art-label{top:10px;left:10px;font-size:8px;padding:5px 7px}#title-screen .title-actions{gap:9px;max-width:330px;margin:0}#title-screen .big-button{min-height:46px}#title-screen .book-button{min-height:40px;padding:8px 12px}#title-screen small{font-size:9px}}
+.app-header h1{font-family:'Yu Mincho',serif;color:#f2e6c8;font-size:clamp(21px,2.6vw,31px)}
+.app-header p{color:#c3cfbe}.app-header .badge{border-radius:5px;background:#526851;color:#eee5cf;border:1px solid #91a07b77}
+.header-actions .secondary{background:#364d40;color:#e9e3ce;border:1px solid #7d907266;border-radius:6px}
+.board{border:4px solid #7b8b60;border-radius:14px;background:linear-gradient(145deg,#53694d,#314932);box-shadow:0 6px 0 #1b3228,0 15px 30px #0003}
+.cell{border-radius:7px;background:linear-gradient(145deg,#e4dfbc,#c8c7a1);box-shadow:inset 0 -3px #b3b48e}
+.cell.rock{background:linear-gradient(145deg,#738464,#4f664b);box-shadow:inset 0 -3px #40583f}
+.cell.rabbit{background:linear-gradient(145deg,#ead69f,#cdb77d);box-shadow:0 0 0 3px #c3a35d,inset 0 -3px #ad9159}
+.egg-cell{background:radial-gradient(circle,#f0e7c0,#d0cfaa)}
+.play-panel,.parent-panel{border-radius:12px;background:#f0ecda;border:1px solid #b4b798;box-shadow:0 14px 35px #0002}
+#journey-coach{background:#e4dcc0;border:1px solid #b7ad7f;border-left:4px solid #9b824f;border-radius:7px;color:#3e4c37}
+.arrow{background:#dce0cc;color:#2d4939;border-bottom-color:#a1af8c;border-radius:8px}
+.go,.big-button{background:linear-gradient(#dbc38b,#c2a164);color:#3a3220;box-shadow:0 3px 0 #97783f;border-radius:8px}
+.secondary{background:#dfe2d3;color:#374a3a;border-radius:8px}
+.play-panel .queue{background:#e4e2cf;border-radius:7px}.queue button{background:#e9d8ac;border-radius:6px}
+.route-mark{background:#527e60;border-color:#e8dfbd}.planned-cell{outline-color:#86a57e}.planned-end{box-shadow:inset 0 0 0 4px #bb9452}.active-command{outline-color:#ba8b35;background:#e4c476!important}
+.coach-face .character-image{width:100%;height:100%;left:0;top:0}
+.editor-explorer{display:block;width:78%;height:82%;object-fit:contain;min-width:0;min-height:0;pointer-events:none}
+@media(prefers-reduced-motion:no-preference){#walking-dino[data-mood="walking"] .character-body{animation:explorer-stride .53s ease-in-out infinite}@keyframes explorer-stride{25%{transform:translateY(-2px) rotate(-2deg)}75%{transform:translateY(1px) rotate(2deg)}}}
+footer{color:#b2c0ac}.sound-button{background:#e6e0c9;color:#41533d;border-radius:6px;box-shadow:0 2px 10px #0002}
+#collection-screen{background:radial-gradient(ellipse at top,#efeddc,#d8ddcc)}
+#catalog-tabs button{background:#d4dbc6;border-radius:6px;color:#3d4f3e}#catalog-tabs [aria-selected="true"]{background:#dbc697;border-color:#a78a50;color:#4e4129}
+.collection-card{background:#eee9d8;border-radius:9px;border-color:#b6b99c;box-shadow:0 3px 0 #aeb699}.collection-card.locked{background:#cfd7c2;border-color:#a7b495;color:#4c6148}
+.collection-card .dino-art{border-radius:5px}#card-details{background:#efe9d7;border-radius:12px;border-color:#aa996c}#field-fact{background:#dfe5d3;border-radius:7px}#field-size{background:#e4d8b7;border-radius:7px}
+#reward-screen{background:radial-gradient(ellipse at center,#f4e6be,#c5cfb3 70%,#91a78a)}
+.reward-copy h2{color:#40583b;font-family:'Yu Mincho',serif}.reward-copy .eyebrow{color:#61734d}.book-button{border-radius:8px;border-color:#b6a77e;background:#eee8d4;color:#49563b}
+#reward-screen.shiny-reward{background:radial-gradient(ellipse at center,#fff1c1,#d9be7f 65%,#919477)}
+@media(max-width:700px){#title-screen .title-art{height:100%;width:min(100%,390px);border-radius:8px}#title-screen .title-copy{gap:8px}#title-screen h2{font-size:30px;line-height:1.4}#title-screen h2 em{font-size:.45em}#title-screen .title-copy p{font-size:11px;line-height:1.6}#title-screen .eyebrow{font-size:10px;padding-bottom:6px}#title-screen .sun-label{font-size:9px;padding:18px 8px 9px}#title-screen .big-button{font-size:18px}.app-header h1{font-size:18px}.board{border-radius:10px}.cell{border-radius:5px}}

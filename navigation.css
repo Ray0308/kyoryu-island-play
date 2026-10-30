@@ -1,0 +1,6 @@
+#reward-home{position:absolute;right:clamp(14px,3vw,40px);top:clamp(14px,3vw,32px);z-index:5;background:#f8f0d9e8;border:1px solid #b6a16b;color:#4e6147;min-height:40px;padding:9px 15px;font-size:13px;box-shadow:0 3px 0 #b3ae87}
+.collection-navigation{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:none}
+#collection-screen #collection-home{min-height:42px;padding:10px 14px;border:1px solid #b2a47866;background:#344a3b;color:#ece1c5;box-shadow:0 3px 0 #0e2118;font-size:12px}
+#card-details #detail-home{font-size:12px;background:#d5dbc8;border:1px solid #a3ae8b77;color:#3e543f}
+#help-home{display:block;margin:16px 0 0 auto;font-size:13px;border:1px solid #b6a16b}
+@media(max-width:700px){#reward-home{top:10px;right:12px;min-height:32px;padding:6px 10px;font-size:11px}#collection-screen .collection-navigation{flex-direction:column;gap:4px;align-items:stretch}#collection-screen #collection-home{min-height:30px;padding:5px 8px;font-size:10px}#collection-screen #close-collection{min-height:30px;padding:5px 8px}#card-details #detail-home{font-size:11px;padding:6px 9px}}

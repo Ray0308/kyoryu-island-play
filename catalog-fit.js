@@ -1,0 +1,6 @@
+let catalogPage=0,lastCatalogCategory=activeCategory;
+const catalogPages=document.createElement('nav');catalogPages.id='catalog-pages';catalogPages.setAttribute('aria-label','ずかんの ページ');catalogPages.innerHTML='<button id="catalog-prev" class="secondary">← まえ</button><span id="catalog-page" aria-live="polite"></span><button id="catalog-next" class="secondary">つぎ →</button>';$('collection-grid').after(catalogPages);
+function fitCatalogPages(){if(lastCatalogCategory!==activeCategory){catalogPage=0;lastCatalogCategory=activeCategory}const cards=[...$('collection-grid').children],pageSize=window.innerWidth<=700?4:6,total=Math.max(1,Math.ceil(cards.length/pageSize));catalogPage=Math.min(catalogPage,total-1);cards.forEach((card,i)=>card.hidden=i<catalogPage*pageSize||i>=(catalogPage+1)*pageSize);catalogPages.hidden=total<=1;$('catalog-prev').disabled=catalogPage===0;$('catalog-next').disabled=catalogPage>=total-1;$('catalog-page').textContent=(catalogPage+1)+' / '+total;}
+const renderBeforeFit=renderCatalog;renderCatalog=function(){renderBeforeFit();fitCatalogPages()};
+$('catalog-prev').onclick=()=>{catalogPage=Math.max(0,catalogPage-1);fitCatalogPages()};$('catalog-next').onclick=()=>{catalogPage++;fitCatalogPages()};window.addEventListener('resize',fitCatalogPages);
+fitCatalogPages();

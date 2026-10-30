@@ -1,0 +1,25 @@
+/* Constrain grid tracks and artwork to the viewport, rather than image size. */
+#collection-screen{overflow:hidden}
+#card-details,#card-details:has(#field-profile:not([hidden])){position:fixed;inset:24px;height:calc(100dvh - 48px);max-width:1400px;margin:auto;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);align-items:stretch;gap:clamp(12px,2vw,28px);padding:clamp(14px,2vw,28px);overflow:hidden;min-height:0}
+#detail-art{width:100%;height:100%;min-width:0;min-height:0;max-height:none;aspect-ratio:auto;margin:0;display:grid;place-items:center;overflow:hidden;border-radius:20px}
+#detail-art .dino-art,#detail-art .catalog-portrait{width:100%;height:100%;aspect-ratio:auto;min-height:0;min-width:0}
+#detail-art img,#detail-art svg{width:100%;height:100%;object-fit:contain;min-height:0;min-width:0}
+#card-details>div:nth-child(2){display:flex;flex-direction:column;justify-content:center;gap:8px;min-width:0;min-height:0;height:100%}
+#card-details h3{margin:0;font-size:clamp(18px,2vw,28px)}
+#card-details #detail-info{margin:0;font-size:12px;line-height:1.5}
+#field-profile{min-height:0;display:flex;flex-direction:column;gap:8px}
+#field-fact{margin:0;padding:10px;font-size:clamp(12px,1.2vw,16px)!important;line-height:1.6}
+#read-field{align-self:flex-start;flex:none;min-height:34px;padding:7px 10px;font-size:12px}
+#field-size{margin:0;padding:10px;min-height:0}
+#field-size svg{height:clamp(65px,13dvh,110px);width:100%;max-height:none}
+#field-size strong{font-size:12px}
+#field-sources{margin:0;flex:none}
+#field-sources[open]{position:absolute;right:22px;bottom:76px;width:calc(50% - 34px);z-index:8;background:#fffdf3;border:2px solid #d8cda8;border-radius:12px;padding:12px;box-shadow:0 5px 25px #284d4233}
+#card-details .controls{flex:none;gap:8px;margin:4px 0 0}
+#card-details .controls button{min-height:38px;padding:8px 12px}
+#collection-screen #collection-grid{overflow:hidden;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
+#catalog-pages{display:flex;align-items:center;justify-content:center;gap:12px;flex:none;margin-top:6px}
+#catalog-pages button{min-height:34px;padding:6px 12px;font-size:12px}
+#catalog-pages span{font-size:12px;font-weight:bold}
+@media(max-height:600px) and (min-width:701px){#card-details,#card-details:has(#field-profile:not([hidden])){inset:12px;height:calc(100dvh - 24px);padding:12px}#card-details>div:nth-child(2),#field-profile{gap:5px}#field-fact{padding:6px;font-size:12px!important}#field-size{padding:6px}#field-size svg{height:65px}#card-details .controls button{min-height:32px;padding:5px 10px}}
+@media(max-width:700px){#card-details,#card-details:has(#field-profile:not([hidden])){inset:10px;height:calc(100dvh - 20px);grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:8px;padding:12px}#card-details>div:nth-child(2){height:auto;gap:5px}#card-details h3{font-size:18px}#card-details #detail-info{font-size:10px}#field-profile{gap:5px}#field-fact{font-size:11px!important;padding:6px;line-height:1.5}#field-size{padding:6px}#field-size strong{font-size:10px}#field-size svg{height:65px}#read-field{font-size:11px;padding:5px 8px;min-height:30px}#field-sources summary{font-size:10px}#field-sources[open]{left:14px;right:14px;width:auto;bottom:64px}#card-details .controls button{font-size:12px;min-height:34px;padding:6px 12px}#collection-screen #collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));min-height:0}#catalog-pages button{min-height:30px}#collection-screen #collection-fact{font-size:10px;min-height:14px;margin-top:4px}}

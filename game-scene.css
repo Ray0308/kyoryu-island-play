@@ -1,0 +1,47 @@
+/* The playable island: stone paths, a forest canopy and an explorer's route desk. */
+main{position:relative;isolation:isolate}
+main:before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(90deg,#0b2318a8,#132e25d9),url('assets/catalog/secret-4-background-v1.png') center/cover;filter:saturate(.75)}
+main:after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 20% 25%,#d8c78d17,transparent 50%),linear-gradient(transparent 65%,#081d1ba6)}
+main .app-header{padding:0 2px 10px;border-bottom:1px solid #c3b07844}
+main .app-header h1{font-size:clamp(21px,2.3vw,31px);letter-spacing:.08em;text-shadow:0 3px 14px #0008}
+main .app-header .badge{border:1px solid #d2b77e88;background:linear-gradient(125deg,#b08b4d,#795d31);color:#fff0cd;padding:5px 14px;box-shadow:0 3px 8px #0003;font-size:12px;letter-spacing:.06em}
+main .app-header p{color:#d0d7bd;font-size:13px}
+main .header-actions button{background:#16362cbb;border:1px solid #acb18b66;box-shadow:0 3px 0 #0b2018;color:#eee3c7;backdrop-filter:blur(8px)}
+main .workspace{gap:clamp(16px,2.5vw,36px)}
+main .board{isolation:isolate;border:4px solid #b49b62;border-radius:20px;background:linear-gradient(#16372955,#152d1dcc),url('assets/catalog/secret-4-background-v1.png') center/cover;box-shadow:0 0 0 3px #304a32,0 0 0 5px #c2b18455,0 9px 0 #0d241a,0 22px 45px #0008,inset 0 0 25px #0006}
+main .board:before{content:'';position:absolute;inset:4px;border:1px solid #e1d39544;border-radius:12px;pointer-events:none;z-index:4}
+main .board .cell{border-radius:9px;background:linear-gradient(#fff3cd14,#40350b19),url('assets/game/stone-path-v1.png') center/100% 100%;box-shadow:inset 0 1px 2px #fff8,0 3px 0 #726745,0 4px 7px #041b1d66;border:1px solid #decda680}
+main .board .cell:nth-child(3n){background-position:center;filter:brightness(.98)}
+main .board .cell.rock{font-size:0;color:transparent;border:1px solid #75825944;background:linear-gradient(145deg,#344b2f,#213b2a);box-shadow:inset 0 0 15px #0b2318aa,0 2px 0 #10251a}
+main .board .cell.rock:after{content:'';position:absolute;inset:0;background:url('assets/game/moss-rock-v1.png') center/contain no-repeat;pointer-events:none}
+main .board .cell.rabbit{background:linear-gradient(#eac4613b,#d5a13844),url('assets/game/stone-path-v1.png') center/100% 100%;box-shadow:inset 0 0 0 2px #f4d889,0 0 0 2px #d0a248,0 0 22px #edc65f55;border-color:#f6df9b}
+main .board .egg-cell{background:radial-gradient(ellipse,#ffe5988c,transparent 75%),url('assets/game/stone-path-v1.png') center/100% 100%;box-shadow:inset 0 0 0 2px #e7c268,0 0 19px #f3d36a55}
+main .board .egg-cell:after{content:'';position:absolute;width:62%;height:27%;bottom:13%;left:19%;border-radius:50%;border:3px double #a17e35;background:repeating-conic-gradient(#89713c 0 6deg,#c7ab62 6deg 12deg);box-shadow:0 3px 5px #0005;z-index:0;pointer-events:none}
+main .board .colored-egg{z-index:1;filter:drop-shadow(0 0 8px #f2db7e66);width:clamp(24px,3.8vw,58px);height:clamp(32px,5vw,76px)}
+main .board .planned-cell{outline:3px solid #83c7b0;outline-offset:-4px;box-shadow:inset 0 0 15px #5dc9aa33,0 3px 0 #726745}
+main .board .planned-end{box-shadow:inset 0 0 0 4px #e8bd55,0 0 18px #e9c66755}
+main .route-mark{background:linear-gradient(#4a9e82,#275b48);border:1px solid #fff1bc;color:#fff9e9;box-shadow:0 2px 6px #113b3677;font-size:11px}
+main #walking-dino .character-body{inset:12% 6% 7%}
+main #walking-dino .character-shadow{bottom:5%;height:17%;background:radial-gradient(ellipse,#102f2a88,transparent 70%)}
+main #walking-dino .character-image{filter:drop-shadow(0 4px 3px #0a261d66)}
+main .play-panel{position:relative;border-radius:17px;padding:clamp(16px,2.1vw,28px);border:1px solid #d7bd82;background:radial-gradient(ellipse at 5% 0,#fff3d9,transparent 70%),repeating-linear-gradient(0deg,transparent 0 4px,#9b895003 4px 5px),#e9e1c8;box-shadow:0 0 0 4px #314d3b,0 0 0 5px #b7a06b55,0 15px 45px #0005;gap:clamp(8px,1.2dvh,14px)}
+main .play-panel>strong{color:#405440;font-size:clamp(16px,1.6vw,21px);letter-spacing:.04em}
+main #journey-coach{border:1px solid #95aa7d;border-left:4px solid #526d42;background:linear-gradient(125deg,#dce4c9,#e9e4c9);box-shadow:inset 0 1px #fff9,0 3px 8px #45533a0b;border-radius:10px;padding:10px 12px;color:#344c36;min-height:62px;gap:12px}
+main .coach-face{background:radial-gradient(ellipse,#a2b58a66,transparent 75%);border-radius:50%}
+main #arrows{gap:7px;grid-template-columns:repeat(3,65px);grid-template-rows:repeat(2,59px)}
+main #arrows .arrow{display:flex;flex-direction:column;justify-content:center;align-items:center;line-height:1;gap:2px;color:#f5edcc;background:linear-gradient(145deg,#527d5e,#2b513c);border:1px solid #7d9c74;border-bottom:4px solid #173d29;border-radius:10px;box-shadow:inset 0 1px #cddbb844,0 3px 6px #163d2922;font-size:31px}
+main #arrows .arrow:after{content:attr(aria-label);font-size:9px;color:#d6dfbf;font-weight:normal;letter-spacing:.06em}
+main .play-panel .queue{position:relative;border:1px solid #b5ac83;border-top:3px solid #a89b6a;background:linear-gradient(145deg,#dad8be,#e7dfc5);border-radius:10px;box-shadow:inset 0 3px 9px #58643b14;gap:7px;min-height:65px;padding:10px}
+main .queue:empty:before{color:#798062;font-size:13px}
+main .queue button{position:relative;background:linear-gradient(#fff4d2,#e4c789);border:1px solid #c4a569;border-bottom:3px solid #ad8950;border-radius:7px;color:#3e593e;font-size:25px;min-width:42px;padding:7px 10px;box-shadow:0 2px 4px #45523214}
+main .queue button:before{content:var(--command-number);position:absolute;left:3px;top:2px;font-size:8px;color:#92763c;line-height:1}
+main .queue .active-command{background:linear-gradient(#ffeab0,#e6b344)!important;outline:3px solid #d4a035;box-shadow:0 0 15px #eec45f99}
+main .queue .done-command{background:#cbd6b9;opacity:.6}
+main .play-panel .status{font-size:13px;color:#4f6549;min-height:26px;line-height:1.5}
+main #run{min-width:190px;min-height:56px;font-size:20px;background:linear-gradient(#f4d78a,#d7aa50);border:1px solid #fff0b1;border-bottom:4px solid #9c7431;box-shadow:0 4px 0 #c5b48a,0 5px 18px #a68a4322;color:#493b22;border-radius:10px}
+main #run:disabled{opacity:.5;box-shadow:none}
+main #clear{background:#d7ddc9;border:1px solid #a6b18d;border-bottom:3px solid #a2af89;color:#4e6247}
+main footer{color:#abbc9b;font-size:10px;letter-spacing:.08em}
+@media(prefers-reduced-motion:no-preference){main .board .egg-cell:after{animation:nest-glow 3s ease-in-out infinite}main .board.goal-reached{animation:island-discovery .8s ease-out}main .play-panel[data-expedition-state=walking]{box-shadow:0 0 0 4px #314d3b,0 0 0 5px #b7a06b55,0 0 30px #89c7a526}main .queue button{animation:route-chip-in .18s ease-out}@keyframes nest-glow{50%{box-shadow:0 0 14px #e9d27c77;filter:brightness(1.15)}}@keyframes island-discovery{40%{box-shadow:0 0 0 5px #f3da8c,0 0 65px #e9cd7399}}@keyframes route-chip-in{from{opacity:.5;translate:0 3px}to{opacity:1;translate:0 0}}}
+@media(min-width:701px) and (max-height:720px){main .app-header{padding-bottom:5px}main .app-header h1{font-size:23px}main .app-header p{font-size:11px}main .play-panel{padding:14px 18px;gap:6px}main #journey-coach{padding:7px 10px;min-height:48px;font-size:12px}main #arrows{grid-template-columns:repeat(3,54px);grid-template-rows:repeat(2,43px);gap:5px}main #arrows .arrow{font-size:25px}main #arrows .arrow:after{display:none}main .play-panel .queue{min-height:47px;padding:6px}main #run{min-height:46px;font-size:17px}main .play-panel .status{font-size:11px;min-height:20px}}
+@media(max-width:700px){main .app-header{padding-bottom:5px}main .app-header h1{font-size:17px}main .app-header .badge{font-size:10px;padding:3px 9px}main .app-header p{font-size:10px}main .workspace{gap:9px}main .board{border-radius:13px}main .board .cell{border-radius:6px}main .board .egg-cell:after{border-width:2px}main .board .colored-egg{width:25px;height:34px}main .play-panel{padding:8px 10px;gap:4px;border-radius:12px}main .play-panel>strong{font-size:12px}main #journey-coach{padding:4px 7px;min-height:36px;font-size:10px;gap:6px}main #arrows{grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,33px);gap:3px}main #arrows .arrow{font-size:23px;border-bottom-width:3px;border-radius:7px}main #arrows .arrow:after{display:none}main .play-panel .queue{min-height:35px;padding:4px;gap:4px}main .queue button{font-size:18px;min-width:30px;min-height:29px;padding:4px 6px}main .queue button:before{font-size:6px;left:2px;top:1px}main #run{font-size:15px;min-width:150px;min-height:38px;padding:7px 12px}main #clear{min-height:36px;font-size:12px;padding:6px 10px}main .play-panel .status{font-size:10px;min-height:17px}main .play-panel small{font-size:8px}}

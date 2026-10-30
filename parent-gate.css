@@ -1,0 +1,4 @@
+#title-screen .title-parent-entry{position:absolute;left:20px;bottom:14px;min-height:32px;padding:6px 12px;background:#ffffff80;color:#4e735e;font-size:12px;border:1px solid #fff9;box-shadow:none;z-index:2}
+#parent-gate{width:min(380px,90vw);padding:26px;text-align:center;box-shadow:0 20px 80px #214f3933}
+#parent-gate h2{font-size:22px;margin:0 0 12px}#parent-gate p{font-size:14px}#parent-gate label{display:block;font-size:13px;margin-bottom:8px}#parent-pin{width:180px;max-width:100%;font-size:28px;letter-spacing:.4em;text-align:center;padding:10px;border-radius:12px;border:2px solid #c5d6b6;color:#304f48}#parent-pin-message{min-height:36px;color:#ad5836}#parent-gate .controls button{font-size:14px;padding:12px 18px}
+@media(max-width:700px){#title-screen .title-parent-entry{left:12px;bottom:4px;min-height:26px;font-size:10px;padding:4px 8px}}
